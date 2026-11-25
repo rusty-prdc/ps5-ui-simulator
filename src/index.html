@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>PS5 OS</title>
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/boot.css">
+<link rel="stylesheet" href="css/home.css">
+<link rel="stylesheet" href="css/views.css">
+<link rel="stylesheet" href="css/real.css">
+<link rel="stylesheet" href="css/downloads.css">
+<link rel="stylesheet" href="css/extras.css">
+<link rel="stylesheet" href="css/gameboot.css">
+</head>
+<body>
+<div class="os" id="os" data-screen="boot">
+
+  <div class="ambient" id="ambient" aria-hidden="true">
+    <div class="ambient__layer is-on" id="ambientA"></div>
+    <div class="ambient__layer" id="ambientB"></div>
+    <div class="ambient__grid"></div>
+    <div class="ambient__noise"></div>
+    <div class="ambient__vignette"></div>
+  </div>
+
+  <section class="screen screen--home" id="homeScreen" aria-label="Домашний экран">
+    <header class="topbar" id="topbar">
+      <div class="topbar__left">
+        <button class="psbadge" id="psBtn" aria-label="Меню PlayStation" title="Меню PlayStation (P)">
+          <img class="psbadge__logo" src="assets/logos/playstation.svg" alt=""><span class="psbadge__led"></span>
+        </button>
+        <button class="userchip" data-action="profile" aria-label="Профиль пользователя">
+          <span class="avatar avatar--sm avatar--photo" id="topAvatar"><img id="topAvatarImg" alt=""></span><span class="userchip__status" id="topStatus" title="В сети"></span>
+          <span class="userchip__text"><strong id="topName">Stepa_</strong><small id="topLevel">Уровень 24</small></span>
+        </button>
+        <span class="topbar__divider"></span>
+        <div class="netstat" id="netStat">
+          <span class="netstat__dot"></span><span class="netstat__text">Подключено к сети</span>
+        </div>
+      </div>
+      <div class="topbar__center">
+        <div class="modeswitch" role="tablist" aria-label="Режим отображения">
+          <button class="modeswitch__btn is-active" data-mode="games" role="tab" aria-selected="true">Игры</button>
+          <button class="modeswitch__btn" data-mode="media" role="tab" aria-selected="false">Медиа</button>
+          <span class="modeswitch__pill" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="topbar__right">
+        <button class="iconbtn" data-action="search" aria-label="Поиск" title="Поиск (S)"><span class="ico" data-ico="search"></span></button>
+        <button class="iconbtn" data-action="friends" aria-label="Друзья" title="Друзья"><span class="ico" data-ico="users"></span><span class="dot"></span></button>
+        <button class="iconbtn" data-action="notifications" aria-label="Уведомления" title="Уведомления"><span class="ico" data-ico="bell"></span><span class="badge" id="notifBadge">3</span></button>
+        <button class="iconbtn" data-action="settings" aria-label="Настройки" title="Настройки"><span class="ico" data-ico="settings"></span></button>
+        <span class="topbar__divider"></span>
+        <div class="topbar__clock"><time id="clock">--:--</time><span id="clockDate">24 ноября</span></div>
+        <div class="wifi" id="wifi" title="Wi-Fi подключён">
+          <span class="wifi__bars"><i></i><i></i><i></i></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="home" id="home">
+      <div class="hero" id="hero">
+        <div class="hero__art" id="heroArt" aria-hidden="true"></div>
+        <div class="hero__shade" aria-hidden="true"></div>
+        <div class="hero__content" id="heroContent">
+          <p class="hero__kicker" id="heroKicker"></p>
+          <h1 class="hero__title" id="heroTitle"></h1>
+          <p class="hero__meta" id="heroMeta"></p>
+          <div class="hero__actions" id="heroActions">
+            <button class="btn btn--primary" id="heroPlay"><span class="ico" data-ico="play"></span><span>Запустить</span></button>
+            <button class="btn btn--ghost" id="heroMore">Ещё</button>
+            <button class="iconbtn iconbtn--round" id="heroFav" aria-label="В избранное"><span class="ico" data-ico="heart"></span></button>
+          </div>
+          <div class="hero__facts" id="heroFacts"></div>
+        </div>
+        <div class="hero__poster" id="heroPoster" aria-hidden="true"></div>
+        <div class="hero__dotnav" id="heroDots" aria-hidden="true"></div>
+      </div>
+
+      <div class="shelf">
+        <div class="shelf__head">
+          <div class="shelf__title">
+            <span id="shelfLabel">Моя библиотека</span>
+            <button class="shelf__link" id="openLibrary">Вся библиотека <span class="ico" data-ico="chevronRight"></span></button>
+          </div>
+          <div class="shelf__hint">
+            <span><kbd>←</kbd><kbd>→</kbd> выбор</span><span><kbd>Enter</kbd> запуск</span><span><kbd>Esc</kbd> назад</span>
+          </div>
+        </div>
+        <div class="rail" id="rail" role="listbox" aria-label="Лента игр"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="screen screen--view" id="viewScreen" aria-label="Раздел системы">
+    <div class="view" id="viewRoot"></div>
+  </section>
+
+  <section class="screen screen--app" id="appScreen" aria-label="Медиаприложение">
+    <div class="apphost" id="appHost"></div>
+  </section>
+
+  <div class="layer" id="layer" aria-live="polite"></div>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <div class="boot" id="boot" aria-label="Загрузка системы">
+    <div class="boot__black" id="bootBlack"></div>
+    <div class="boot__logo" id="bootLogo">
+      <div class="boot__mark">
+        <img class="pslogo-img" src="assets/logos/playstation.svg" alt="PlayStation">
+        <div class="boot__shapes"><i class="sh sh--tri"></i><i class="sh sh--cir"></i><i class="sh sh--cro"></i><i class="sh sh--squ"></i></div>
+      </div>
+      <div class="boot__wordmark"><span>PlayStation</span><b>5</b></div>
+      <div class="boot__glow"></div>
+    </div>
+
+    <div class="boot__reel" id="bootReel">
+      <p class="boot__reelbrand">SONY INTERACTIVE ENTERTAINMENT</p>
+      <div class="boot__logogrid">
+        <div class="boot__logotile"><img src="assets/logos/playstation.svg" alt="PlayStation"><small>PlayStation</small></div>
+        <div class="boot__logotile"><img src="assets/logos/rockstar.svg" alt="Rockstar Games"><small>Rockstar Games</small></div>
+        <div class="boot__logotile"><img src="assets/logos/insomniac.png" alt="Insomniac Games"><small>Insomniac Games</small></div>
+        <div class="boot__logotile"><img src="assets/logos/santamonica.svg" alt="Santa Monica Studio"><small>Santa Monica Studio</small></div>
+        <div class="boot__logotile"><img src="assets/logos/naughtydog.png" alt="Naughty Dog"><small>Naughty Dog</small></div>
+        <div class="boot__logotile"><img src="assets/logos/cdpr.svg" alt="CD Projekt Red"><small>CD Projekt Red</small></div>
+        <div class="boot__logotile"><img src="assets/logos/capcom.png" alt="Capcom"><small>Capcom</small></div>
+        <div class="boot__logotile"><img src="assets/logos/teamasobi.svg" alt="Team Asobi"><small>Team Asobi</small></div>
+      </div>
+      <div class="boot__reelbar"><i></i></div>
+      <p class="boot__reelstatus">Загрузка компонентов системы…</p>
+    </div>
+
+    <div class="boot__stage" id="bootUser">
+      <div class="boot__userhead">
+        <p class="eyebrow">С возвращением</p>
+        <h2>Кто сегодня играет?</h2>
+      </div>
+      <div class="userwall" id="userWall"></div>
+      <p class="boot__hint">Выберите профиль, чтобы продолжить <span class="boot__key">Enter</span></p>
+    </div>
+
+    <div class="boot__stage boot__stage--load" id="bootLoad">
+      <div class="bootload__profile"><span class="avatar" id="bootAvatar">S</span><div><strong id="bootName">Stepa_</strong><small>Вход в систему</small></div></div>
+      <div class="bootload__bar"><i id="bootBar"></i></div>
+      <p class="bootload__status" id="bootStatus">Подготовка системы…</p>
+    </div>
+
+    <div class="boot__by">by XPRODC</div>
+    <div class="boot__skip" id="bootSkip">Нажмите, чтобы пропустить</div>
+  </div>
+
+  <div class="lock" id="lock" aria-label="Экран блокировки">
+    <div class="lock__bg"></div>
+    <div class="lock__top"><span class="lock__ps">PS5</span><time id="lockClock">--:--</time><span id="lockDate"></span></div>
+    <div class="lock__center">
+      <span class="avatar avatar--xl" id="lockAvatar">S</span>
+      <h2 id="lockName">Stepa_</h2>
+      <p>Нажмите <kbd>Enter</kbd> или кнопку PS, чтобы войти</p>
+      <button class="btn btn--primary" id="lockLogin"><span class="ico" data-ico="user"></span>Войти</button>
+    </div>
+    <div class="lock__bottom"><span class="ico" data-ico="lock"></span> Система заблокирована</div>
+  </div>
+
+  <div class="poweroff" id="powerOff">
+    <div class="poweroff__pulse"></div>
+    <div class="poweroff__inner">
+      <img class="psbadge__logo psbadge__logo--big" src="assets/logos/playstation.svg" alt="PlayStation">
+      <p id="powerOffText">Система выключена</p>
+      <button class="btn btn--primary" id="powerOnBtn"><span class="ico" data-ico="power"></span>Включить PS5</button>
+    </div>
+  </div>
+
+  <div class="rest" id="restScreen">
+    <div class="rest__pulse"></div>
+    <div class="rest__inner">
+      <span class="rest__icon"><span class="ico" data-ico="moon"></span></span>
+      <h2>Режим покоя</h2>
+      <p>Загрузки продолжаются. Нажмите любую клавишу, чтобы выйти.</p>
+    </div>
+  </div>
+
+  <div class="gameview" id="gameView" aria-label="Запущенная игра">
+    <div class="gameview__art" id="gameViewArt"></div>
+    <div class="gameview__shade"></div>
+    <div class="gameview__top">
+      <div class="gameview__badge"><span class="dot dot--live"></span><span id="gvStatus">Игра запущена</span></div>
+      <div class="gameview__clock"><time id="gvClock">00:00</time><span>сеанс</span></div>
+    </div>
+    <div class="gameview__center">
+      <p class="eyebrow" id="gvKicker">PS5 · Игровой сеанс</p>
+      <h1 id="gvTitle">Marvel's Spider-Man 2</h1>
+      <p id="gvSub">Нажмите Esc, чтобы открыть меню паузы</p>
+      <div class="gameview__loader" id="gvLoader"><i></i></div>
+    </div>
+    <div class="gameview__hud" id="gvHud">
+      <span><b>HDR</b> включён</span><span><b>60</b> FPS</span><span><b>4K</b> · 3840×2160</span><span><b>DualSense</b> подключён</span>
+    </div>
+    <div class="pause" id="pauseMenu">
+      <div class="pause__card">
+        <p class="eyebrow">Пауза</p>
+        <h2 id="pauseTitle">Marvel's Spider-Man 2</h2>
+        <div class="pause__actions">
+          <button class="btn btn--primary" id="resumeBtn"><span class="ico" data-ico="play"></span>Продолжить</button>
+          <button class="btn btn--ghost" id="pauseSettings"><span class="ico" data-ico="settings"></span>Настройки игры</button>
+          <button class="btn btn--ghost" id="closeGameBtn"><span class="ico" data-ico="x"></span>Закрыть игру</button>
+        </div>
+        <p class="pause__hint">Сеанс: <span id="pauseSession">00:00</span> · Прогресс сохранён автоматически</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="screensaver" id="screensaver" aria-hidden="true">
+    <div class="screensaver__bg"></div>
+    <div class="screensaver__inner"><time id="ssClock">--:--</time><span id="ssDate"></span><p id="ssHint">Нажмите любую клавишу</p></div>
+  </div>
+
+</div>
+<div class="rotatehint">Поверните экран горизонтально, чтобы пользоваться PS5 OS</div>
+
+<script src="js/icons.js"></script>
+<script src="js/data.js"></script>
+<script src="js/catalog.js"></script>
+<script src="js/avatars.js"></script>
+<script src="js/friends.js"></script>
+<script src="js/media.js"></script>
+<script src="js/assets-inline.js"></script>
+<script src="js/art.js"></script>
+<script src="js/state.js"></script>
+<script src="js/system.js"></script>
+<script src="js/home.js"></script>
+<script src="js/views.js"></script>
+<script src="js/views2.js"></script>
+<script src="js/downloads.js"></script>
+<script src="js/store2.js"></script>
+<script src="js/main.js"></script>
+<script src="js/gameboot.js"></script>
+<script src="js/extras.js"></script>
+</body>
+</html>

@@ -1,0 +1,203 @@
+/* ===== запуск игры ===== */
+.gb { position: fixed; inset: 0; z-index: 1400; background: #000; display: none; }
+.gb.is-on { display: block; }
+.gb__stage { position: absolute; inset: 0; overflow: hidden; }
+
+/* --- логотипы студии и издателя --- */
+.gb-splash { position: absolute; inset: 0; display: grid; place-items: center; background: #000; }
+.gb-splash__box {
+  opacity: 0; transform: translateY(10px) scale(.985);
+  transition: opacity .55s ease, transform .8s cubic-bezier(.2,.7,.2,1);
+  display: grid; place-items: center; padding: 0 8vw; max-width: 92vw;
+}
+.gb-splash.is-in .gb-splash__box { opacity: 1; transform: none; }
+.gb-splash.is-out .gb-splash__box { opacity: 0; transform: translateY(-8px) scale(1.012); transition-duration: .45s; }
+.gb-splash__logo {
+  height: min(30vh, 260px); width: auto; max-width: 46vw; object-fit: contain;
+  filter: drop-shadow(0 18px 50px rgba(0,0,0,.65));
+}
+.gb-splash__word {
+  font-size: clamp(22px, 3.4vw, 50px); font-weight: 800; letter-spacing: .26em;
+  text-transform: uppercase; color: #fff; text-align: center; line-height: 1.25;
+}
+.gb-splash__bar {
+  position: absolute; bottom: 58px; left: 50%; transform: translateX(-50%);
+  width: 190px; height: 2px; border-radius: 2px; background: rgba(255,255,255,.14);
+  overflow: hidden; opacity: 0; transition: opacity .3s;
+}
+.gb-splash.is-in .gb-splash__bar { opacity: 1; }
+.gb-splash__bar i { display: block; height: 100%; width: 0; background: rgba(255,255,255,.85); animation: gbBar 1.65s linear forwards; }
+@keyframes gbBar { to { width: 100%; } }
+.gb-splash__skip {
+  position: absolute; right: 30px; bottom: 26px; font-size: 11px; letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(255,255,255,.4); opacity: 0; animation: gbFade .6s .8s ease forwards;
+}
+
+/* --- меню игры --- */
+.gb-menu { position: absolute; inset: 0; overflow: hidden; }
+.gb-menu__bg {
+  position: absolute; inset: -2%; background-size: cover; background-position: center 30%;
+  animation: gbZoom 16s ease-out both;
+}
+@keyframes gbZoom { from { transform: scale(1.07); } to { transform: scale(1); } }
+.gb-menu__scrim {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(6,8,14,.95) 0%, rgba(6,8,14,.74) 34%, rgba(6,8,14,.12) 68%, rgba(6,8,14,.5) 100%),
+    linear-gradient(0deg, rgba(0,0,0,.9) 0%, rgba(0,0,0,0) 46%);
+}
+.gb-menu__head {
+  position: absolute; top: 6.5vh; left: 7vw; width: 42vw; max-width: 520px; height: 13vh;
+  display: flex; align-items: center;
+}
+.gb-menu__logo { height: 100%; width: auto; max-width: 100%; object-fit: contain; filter: drop-shadow(0 14px 34px rgba(0,0,0,.7)); }
+.gb-menu__title {
+  font-size: clamp(26px, 3.6vw, 54px); font-weight: 800; color: #fff;
+  letter-spacing: -.02em; line-height: 1.05; text-shadow: 0 10px 30px rgba(0,0,0,.55);
+}
+.gb-menu__items {
+  position: absolute; left: 6.4vw; top: 50%; transform: translateY(-42%);
+  display: flex; flex-direction: column; gap: 4px; animation: gbSlide .4s cubic-bezier(.2,.7,.2,1) both;
+}
+.gb-item {
+  appearance: none; background: none; border: 0; cursor: pointer;
+  color: rgba(255,255,255,.7); font-size: clamp(17px, 1.6vw, 23px); font-weight: 600;
+  text-align: left; padding: 11px 26px; border-radius: 999px; letter-spacing: .005em;
+  transition: background .16s ease, color .16s ease;
+}
+.gb-item:hover { color: #fff; background: rgba(255,255,255,.08); }
+.gb-item:focus, .gb-item:focus-visible {
+  outline: none; color: #0a0c12; background: #fff;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+}
+.gb-menu__foot {
+  position: absolute; left: 7vw; right: 7vw; bottom: 4.4vh; display: flex;
+  justify-content: space-between; gap: 20px; font-size: 11px; letter-spacing: .16em;
+  text-transform: uppercase; color: rgba(255,255,255,.48);
+}
+
+/* --- ошибка запуска --- */
+.gb-err {
+  position: absolute; inset: 0; background: #0a0c11; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 14px; padding: 6vh 8vw; text-align: center;
+  animation: gbFade .25s ease;
+}
+.gb-err__icon {
+  width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(255,92,92,.12); color: #ff6b6b; margin-bottom: 4px;
+}
+.gb-err__icon svg { width: 26px; height: 26px; }
+.gb-err__title { font-size: clamp(19px, 2vw, 27px); font-weight: 700; color: #fff; }
+.gb-err__text { max-width: 46ch; color: rgba(255,255,255,.58); font-size: 14px; line-height: 1.65; margin: 0; }
+.gb-err__code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; letter-spacing: .18em;
+  color: rgba(255,255,255,.5); background: rgba(255,255,255,.06); border-radius: 6px; padding: 6px 14px;
+}
+.gb-err__actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; justify-content: center; }
+
+/* --- кнопки и панели --- */
+.gb-btn {
+  appearance: none; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.06);
+  color: #fff; font-size: 14px; font-weight: 600; padding: 11px 22px; border-radius: 999px;
+  cursor: pointer; transition: background .15s, border-color .15s, color .15s;
+}
+.gb-btn:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.35); }
+.gb-btn--primary { background: #fff; border-color: #fff; color: #0a0c12; }
+.gb-btn--primary:hover { background: rgba(255,255,255,.86); }
+.gb-btn:focus, .gb-btn:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.gb-btn--primary:focus, .gb-btn--primary:focus-visible { outline-color: rgba(255,255,255,.9); }
+
+.gb-panel {
+  position: absolute; inset: 0; padding: 8vh 9vw 6vh; display: flex; flex-direction: column; gap: 16px;
+  background: rgba(7,9,14,.94); animation: gbFade .22s ease;
+}
+.gb-panel__head {
+  display: flex; align-items: baseline; gap: 14px; padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.gb-panel__head h2 { margin: 0; font-size: 25px; font-weight: 700; color: #fff; }
+.gb-panel__head span { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.42); }
+.gb-panel__body { flex: 1; display: flex; flex-direction: column; gap: 4px; max-width: 760px; overflow: auto; }
+.gb-panel__foot { display: flex; gap: 10px; padding-top: 6px; }
+.gb-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 14px 16px; border: 0; border-radius: 8px; background: rgba(255,255,255,.045);
+  color: #fff; cursor: pointer; transition: background .15s;
+}
+.gb-row:hover { background: rgba(255,255,255,.09); }
+.gb-row:focus, .gb-row:focus-visible { outline: 2px solid #fff; outline-offset: -2px; }
+.gb-row__label { font-size: 15px; color: rgba(255,255,255,.72); }
+.gb-row__value { font-size: 15px; font-weight: 600; color: #fff; }
+.gb-about { flex-direction: row; gap: 26px; align-items: flex-start; flex-wrap: wrap; }
+.gb-about__cover { width: 168px; border-radius: 8px; box-shadow: 0 18px 40px rgba(0,0,0,.5); }
+.gb-about__info p { margin: 0; padding: 5px 0; font-size: 14px; color: rgba(255,255,255,.72); }
+.gb-about__info b { color: rgba(255,255,255,.95); font-weight: 600; }
+
+@keyframes gbFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes gbSlide { from { opacity: 0; transform: translateY(calc(-42% + 14px)); } to { opacity: 1; transform: translateY(-42%); } }
+
+/* --- экран загрузки игры --- */
+.gb-load { position: absolute; inset: 0; overflow: hidden; background: #05070b; }
+.gb-load__bg {
+  position: absolute; inset: -4%; background-size: cover; background-position: center;
+  filter: blur(28px) saturate(1.05) brightness(.55); transform: scale(1.08);
+}
+.gb-load__scrim {
+  position: absolute; inset: 0;
+  background: radial-gradient(120% 90% at 50% 45%, rgba(0,0,0,.35), rgba(0,0,0,.88));
+}
+.gb-load__inner {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: min(46vw, 520px); display: flex; flex-direction: column; align-items: center; gap: 22px;
+}
+.gb-load__logo {
+  max-height: 13vh; max-width: 100%; object-fit: contain;
+  filter: drop-shadow(0 16px 40px rgba(0,0,0,.7));
+}
+.gb-load__title { font-size: clamp(22px, 2.6vw, 34px); font-weight: 800; color: #fff; letter-spacing: -.01em; }
+.gb-load__bar { width: 100%; height: 3px; border-radius: 3px; background: rgba(255,255,255,.16); overflow: hidden; }
+.gb-load__bar i {
+  display: block; height: 100%; width: 0; background: #fff;
+  animation-name: gbLoadBar; animation-timing-function: linear; animation-fill-mode: forwards;
+}
+@keyframes gbLoadBar { to { width: 100%; } }
+.gb-load__meta {
+  width: 100%; display: flex; justify-content: space-between; gap: 16px;
+  font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.5);
+}
+.gb-load__skip {
+  position: absolute; right: 30px; bottom: 26px; font-size: 11px; letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(255,255,255,.34);
+}
+.gb-splash__logo.is-inv { filter: invert(1) drop-shadow(0 18px 50px rgba(0,0,0,.55)); }
+
+/* --- экран запуска приложения (PlayStation) --- */
+.gb-os { position: absolute; inset: 0; overflow: hidden; background: #05070b; }
+.gb-os__bg { position: absolute; inset: -1%; background-size: cover; background-position: center; }
+.gb-os__shade {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(4,6,10,.62) 0%, rgba(4,6,10,.12) 38%, rgba(4,6,10,.8) 100%);
+}
+.gb-os__badge {
+  position: absolute; top: 38px; left: 46px; display: flex; align-items: center; gap: 9px;
+  font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #fff;
+}
+.gb-os__badge i { width: 8px; height: 8px; border-radius: 50%; background: #35e07e; box-shadow: 0 0 10px rgba(53,224,126,.85); }
+.gb-os__clock { position: absolute; top: 32px; right: 46px; text-align: right; color: #fff; }
+.gb-os__clock b { display: block; font-size: 27px; font-weight: 300; letter-spacing: .01em; font-variant-numeric: tabular-nums; }
+.gb-os__clock span { font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.62); }
+.gb-os__center {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: min(74vw, 860px); text-align: center; color: #fff;
+}
+.gb-os__kicker { margin: 0 0 16px; font-size: 11px; letter-spacing: .34em; text-transform: uppercase; color: rgba(255,255,255,.78); }
+.gb-os__title {
+  margin: 0 0 14px; font-size: clamp(30px, 4.6vw, 64px); font-weight: 700; letter-spacing: -.02em;
+  text-shadow: 0 14px 44px rgba(0,0,0,.55);
+}
+.gb-os__sub { margin: 0 0 18px; font-size: 14px; color: rgba(255,255,255,.82); }
+.gb-os__bar { width: min(52%, 400px); height: 3px; margin: 0 auto; border-radius: 3px; background: rgba(0,0,0,.35); overflow: hidden; }
+.gb-os__bar i {
+  display: block; height: 100%; width: 0; background: #5b9cff;
+  animation-name: gbLoadBar; animation-timing-function: ease-out; animation-fill-mode: forwards;
+}
