@@ -1,0 +1,45 @@
+{
+  "name": "ps5-ui-simulator",
+  "version": "1.0.0",
+  "description": "PS5 UI Simulator для Windows: библиотека Steam, свои игры и обложки",
+  "main": "app/main.js",
+  "author": "XPRODC",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "ui": "node scripts/copy-ui.js",
+    "start": "npm run ui && electron .",
+    "dist": "npm run ui && electron-builder --win portable"
+  },
+  "devDependencies": {
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "os.xprodc.ps5ui",
+    "productName": "PS5 UI Simulator",
+    "directories": {
+      "output": "../dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "app/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "signAndEditExecutable": false
+    },
+    "portable": {
+      "artifactName": "PS5-UI-Simulator.exe"
+    },
+    "electronDist": "node_modules/electron/dist"
+  }
+}

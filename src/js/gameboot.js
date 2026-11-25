@@ -172,15 +172,15 @@
   function loadSeconds(g) {
     const size = Number(g.size) || 20;
     const year = Number(g.year) || 2022;
-    const t = 1.2 + Math.pow(size, 0.7) * 0.22 + (year >= 2024 ? 1 : 0);
-    return Math.max(1.7, Math.min(12, t));
+    const t = 62 + Math.min(26, Math.pow(size, 0.62) * 0.9) + (year >= 2024 ? 4 : 0);
+    return Math.max(64, Math.min(94, t));
   }
 
   const STAGES = [
     [0, 'Проверка обновлений'],
-    [12, 'Загрузка ресурсов'],
-    [42, 'Компиляция шейдеров'],
-    [74, 'Загрузка сохранения'],
+    [18, 'Загрузка ресурсов'],
+    [45, 'Компиляция шейдеров'],
+    [75, 'Загрузка сохранения'],
     [92, 'Подготовка интерфейса']
   ];
 
@@ -233,8 +233,13 @@
     phase = 'menu';
     const hero = assetUrl(g.hero || g.cover || '');
     const logo = assetUrl(g.logo || '');
+    const slides = Array.isArray(g.slides) ? g.slides.filter(Boolean) : [];
+    const slidesHTML = slides.length > 1
+      ? `<div class="gb-menu__slides" id="gbSlides"><div class="gb-slide is-on"><img src="${assetUrl(slides[0])}" alt="" decoding="async" draggable="false"></div><div class="gb-slide"><img src="${assetUrl(slides[1])}" alt="" decoding="async" draggable="false"></div></div>`
+      : '';
     stage.innerHTML = `<div class="gb-menu" id="gbMenu">
       <div class="gb-menu__bg"${hero ? ` style="background-image:url('${hero}')"` : ''}></div>
+      ${slidesHTML}
       <div class="gb-menu__scrim"></div>
       <div class="gb-menu__head">
         ${logo ? `<img class="gb-menu__logo" src="${logo}" alt="${g.title}">` : `<h1 class="gb-menu__title">${g.title}</h1>`}
@@ -250,6 +255,22 @@
         <span>v${g.version || '1.00'}${g.year ? ' · ' + g.year : ''}</span>
       </div>
     </div>`;
+    if (slides.length > 1) {
+      let idx = 0;
+      slides.forEach(src => { const pre = new Image(); pre.src = assetUrl(src); });
+      timers.push(setInterval(() => {
+        const box = document.getElementById('gbSlides');
+        if (!box) return;
+        const on = box.querySelector('.gb-slide.is-on');
+        const off = box.querySelector('.gb-slide:not(.is-on)');
+        if (!on || !off) return;
+        idx = (idx + 1) % slides.length;
+        const img = off.querySelector('img');
+        if (img) img.src = assetUrl(slides[idx]);
+        off.classList.add('is-on');
+        on.classList.remove('is-on');
+      }, 5000));
+    }
     timers.push(setTimeout(() => {
       const first = root.querySelector('.gb-item');
       if (first) first.focus({ preventScroll: true });

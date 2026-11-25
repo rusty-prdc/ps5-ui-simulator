@@ -1,5 +1,5 @@
 const LS_KEY = 'ps5os_state_v2';
-const INITIAL_LIBRARY = ['gta','minecraft','fortnite','roblox','fc','spiderman2','gow','tlou2','cod','gt7','hogwarts','rdr2','cyberpunk','re4','astro'];
+const INITIAL_LIBRARY = ['gta6', 'gta','minecraft','fortnite','roblox','fc','spiderman2','gow','tlou2','cod','gt7','hogwarts','rdr2','cyberpunk','re4','astro'];
 
 function defaultState() {
   return {
@@ -57,6 +57,8 @@ let state = (() => {
 
 (function migrate() {
   const base = defaultState();
+  if (!Array.isArray(state.gameOrder)) state.gameOrder = [...INITIAL_LIBRARY];
+  if (!state.gameOrder.includes('gta6')) state.gameOrder.unshift('gta6');
   if (!state.user || typeof state.user !== 'object') state.user = base.user;
   state.user = Object.assign({}, base.user, state.user);
   if (!state.user.avatar) state.user.avatar = randomAvatar();

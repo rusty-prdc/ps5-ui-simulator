@@ -104,6 +104,58 @@ const Home = (() => {
     }, 190);
   }
 
+  let slideTimer = 0;
+  let slideKey = '';
+  let slideIdx = 0;
+
+  function stopHeroSlides() {
+    if (slideTimer) { clearInterval(slideTimer); slideTimer = 0; }
+    slideKey = '';
+    const box = document.getElementById('heroSlides');
+    if (box) box.remove();
+  }
+
+  function startHeroSlides(item) {
+    const arr = item && mode === 'games' && Array.isArray(item.slides) ? item.slides : null;
+    const art = document.getElementById('heroArt');
+    if (!arr || arr.length < 2 || !art) {
+      if (slideKey || document.getElementById('heroSlides')) stopHeroSlides();
+      return;
+    }
+    let box = document.getElementById('heroSlides');
+    if (slideKey === item.id && box) return;
+    stopHeroSlides();
+    slideKey = item.id;
+    slideIdx = 0;
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'heroSlides';
+      box.className = 'hero__slides';
+      art.appendChild(box);
+    }
+    box.classList.remove('is-on');
+    box.innerHTML = '<div class="hero__slide is-on"><img alt="" decoding="async" draggable="false"></div>'
+      + '<div class="hero__slide"><img alt="" decoding="async" draggable="false"></div>';
+    const imgs = box.querySelectorAll('img');
+    imgs[0].src = assetUrl(arr[0]);
+    imgs[1].src = assetUrl(arr[1]);
+    requestAnimationFrame(() => box.classList.add('is-on'));
+    arr.forEach(src => { const pre = new Image(); pre.src = assetUrl(src); });
+    slideTimer = setInterval(() => {
+      const host = document.getElementById('heroSlides');
+      if (!host || host !== box || slideKey !== item.id) { stopHeroSlides(); return; }
+      if (!box.offsetWidth) return;
+      const on = box.querySelector('.hero__slide.is-on');
+      const off = box.querySelector('.hero__slide:not(.is-on)');
+      if (!on || !off) return;
+      slideIdx = (slideIdx + 1) % arr.length;
+      const img = off.querySelector('img');
+      if (img) img.src = assetUrl(arr[slideIdx]);
+      off.classList.add('is-on');
+      on.classList.remove('is-on');
+    }, 5000);
+  }
+
   function renderHero(animate = true) {
     const item = current();
     const content = document.getElementById('heroContent');
@@ -112,6 +164,7 @@ const Home = (() => {
     if (!item) {
       content.innerHTML = `<p class="eyebrow">PS5 OS</p><h1 class="hero__title">Библиотека пуста</h1><p class="hero__meta">Добавьте игру или откройте магазин, чтобы начать.</p><div class="hero__actions"><button class="btn btn--primary" data-view="store">Открыть магазин</button></div>`;
       paintIcons(content);
+      stopHeroSlides();
       art.innerHTML = '<div class="hero__layer is-on"></div><div class="hero__layer"></div>';
       poster.innerHTML = '';
       document.getElementById('heroDots').innerHTML = '';
@@ -149,6 +202,7 @@ const Home = (() => {
       }
       paintIcons(facts);
       swapHeroArt(coverArt(item, { hero: true, plain: true }));
+      startHeroSlides(item);
       setPoster(coverArt(item));
       document.getElementById('heroDots').innerHTML = arr.map(x => `<i class="${x.id === item.id ? 'is-on' : ''}"></i>`).join('');
       document.getElementById('shelfLabel').textContent = mode === 'games' ? 'Моя библиотека' : 'Медиаприложения';

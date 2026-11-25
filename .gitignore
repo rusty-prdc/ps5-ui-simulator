@@ -19,3 +19,6 @@ android/app/src/main/assets/ps5-os.html
 Thumbs.db
 auth.log
 auth.err
+
+dist/
+desktop/app/ui/

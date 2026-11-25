@@ -191,6 +191,13 @@ const CATALOG_NEW = [
     "cover": "assets/store/covers/gta6.jpg",
     "hero": "assets/store/heroes/gta6.jpg",
     "logo": "assets/store/logos/gta6.svg",
+    "slides": [
+      "assets/store/heroes/gta6-art-1.jpg",
+      "assets/store/heroes/gta6-art-2.jpg",
+      "assets/store/heroes/gta6-art-3.jpg",
+      "assets/store/heroes/gta6-art-4.jpg",
+      "assets/store/heroes/gta6-art-5.jpg"
+    ],
     "screenshots": [
       "assets/store/shots/gta6-1.jpg",
       "assets/store/shots/gta6-2.jpg",
